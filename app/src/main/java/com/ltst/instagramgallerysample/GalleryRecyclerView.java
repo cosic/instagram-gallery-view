@@ -9,6 +9,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 
 import timber.log.Timber;
@@ -18,6 +19,11 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
     private static final int MARGIN_TOP = 160;
 
     private GestureDetectorCompat mGestureDetector;
+
+    private AppBarLayout mChild;
+
+    private boolean mDown;
+    private int mScrollOld;
 
     public GalleryRecyclerView(Context context) {
         super(context);
@@ -57,8 +63,34 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         mGestureDetector.onTouchEvent(e);
+
+        switch (e.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN: {
+                mScrollOld = (int) e.getY();
+                mDown = true;
+            }
+            break;
+            case MotionEvent.ACTION_MOVE: {
+                final int oldY = (int) e.getY();
+                final int dY = oldY - mScrollOld;
+                applyOffSetChanges(-dY);
+            }
+            break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL: {
+                mDown = false;
+            }
+            break;
+            default:
+                break;
+        }
         super.onTouchEvent(e);
         return true;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return super.onInterceptTouchEvent(ev);
     }
 
     @Override
@@ -78,29 +110,35 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float dX, float dY) {
-        AppBarLayout child = getNestedChild();
-        if (child != null) {
-            int h = child.getHeight();
-            int childTop = child.getTop();
-            int childBottom = child.getBottom();
-            int scrollPosition = getScrollY();
-            int offset = child.getBottom() - getTop();
-            int verticalScrollOffset = computeVerticalScrollOffset();
-            Timber.d("h=%d, scrollPosition=%d, offset=%d, dY=%f, verticalScrollOffset=%d, childTop=%d",
-                    h, scrollPosition, offset, dY, verticalScrollOffset, child.getTop());
-            int childOffSet = (int) -dY;
-            if (dY < 0 && (childTop == 0 || childTop - dY > 0)) {
-                childOffSet = -childTop;
-            }
-            if (dY > 0 && (childTop - dY < -h + MARGIN_TOP)) {
-                childOffSet = -h - childTop + MARGIN_TOP;
-            }
-            if (childOffSet != 0) {
-                ViewCompat.offsetTopAndBottom(child, childOffSet);
-                ViewCompat.offsetTopAndBottom(this, childOffSet);
-            }
-        }
         return true;
+    }
+
+    private void applyOffSetChanges(int dY) {
+        AppBarLayout child = getNestedChild();
+        if (child == null) return;
+        int h = child.getHeight();
+        int childTop = child.getTop();
+        int childBottom = child.getBottom();
+        int scrollY = getScrollY();
+        int offset = child.getBottom() - getTop();
+        int verticalScrollOffset = computeVerticalScrollOffset();
+        Timber.d("h=%d, scrollY=%d, offset=%d, dY=%d, childTop=%d",
+                h, scrollY, offset, dY, child.getTop());
+        int childOffSet = (int) -dY;
+        if (dY < 0 && (childTop == 0 || childTop - dY > 0)) {
+            childOffSet = -childTop;
+        }
+        if (dY > 0 && (childTop - dY < -h + MARGIN_TOP)) {
+            childOffSet = -h - childTop + MARGIN_TOP;
+        }
+
+        if (dY < 0 && scrollY > 100) {
+            childOffSet = 0;
+        }
+        if (childOffSet != 0) {
+            ViewCompat.offsetTopAndBottom(child, childOffSet);
+            ViewCompat.offsetTopAndBottom(this, childOffSet);
+        }
     }
 
     @Override
@@ -114,14 +152,16 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
     }
 
     private AppBarLayout getNestedChild() {
-        ViewGroup parent = (ViewGroup) getParent();
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            AppBarLayout childAt = (AppBarLayout) parent.getChildAt(i);
-            if (childAt != null) {
-                return childAt;
+        if (mChild == null) {
+            ViewGroup parent = (ViewGroup) getParent();
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                View childAt = parent.getChildAt(i);
+                if (childAt instanceof AppBarLayout) {
+                    mChild = (AppBarLayout) childAt;
+                }
             }
         }
-        return null;
+        return mChild;
     }
 
     public interface GalleryRecyclerViewChild {
