@@ -22,8 +22,8 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
 
     private AppBarLayout mChild;
 
-    private boolean mDown;
-    private int mScrollOld;
+    private boolean mIsFingerDown;
+    private int mStartFingerYPosition;
 
     public GalleryRecyclerView(Context context) {
         super(context);
@@ -47,7 +47,7 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        AppBarLayout child = getNestedChild();
+        AppBarLayout child = getNestedAppBar();
         if (child != null) {
 //            int offset = child.getBottom() - getTop();
 //            int verticalScrollOffset = computeVerticalScrollOffset();
@@ -62,28 +62,29 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        mGestureDetector.onTouchEvent(e);
-
-        switch (e.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN: {
-                mScrollOld = (int) e.getY();
-                mDown = true;
-            }
-            break;
-            case MotionEvent.ACTION_MOVE: {
-                final int oldY = (int) e.getY();
-                final int dY = oldY - mScrollOld;
-                applyOffSetChanges(-dY);
-            }
-            break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL: {
-                mDown = false;
-            }
-            break;
-            default:
-                break;
-        }
+//        mGestureDetector.onTouchEvent(e);
+//
+//        switch (e.getActionMasked()) {
+//            case MotionEvent.ACTION_DOWN: {
+//                mStartFingerYPosition = (int) e.getY();
+//                mIsFingerDown = true;
+//            }
+//            break;
+//            case MotionEvent.ACTION_MOVE: {
+//                final int oldY = (int) e.getY();
+//                final int dY = oldY - mStartFingerYPosition;
+////                mStartFingerYPosition = oldY;
+//                applyOffSetChanges(-dY);
+//            }
+//            break;
+//            case MotionEvent.ACTION_UP:
+//            case MotionEvent.ACTION_CANCEL: {
+//                mIsFingerDown = false;
+//            }
+//            break;
+//            default:
+//                break;
+//        }
         super.onTouchEvent(e);
         return true;
     }
@@ -113,28 +114,44 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
         return true;
     }
 
+    /**
+     * dY > 0 - motion to UP
+     * dY < 0 - motion to DOWN
+     */
     private void applyOffSetChanges(int dY) {
-        AppBarLayout child = getNestedChild();
+        AppBarLayout child = getNestedAppBar();
         if (child == null) return;
-        int h = child.getHeight();
+        int childHeight = child.getHeight();
         int childTop = child.getTop();
         int childBottom = child.getBottom();
         int scrollY = getScrollY();
-        int offset = child.getBottom() - getTop();
+        int offsetUptoChild = child.getBottom() - getTop();
         int verticalScrollOffset = computeVerticalScrollOffset();
-        Timber.d("h=%d, scrollY=%d, offset=%d, dY=%d, childTop=%d",
-                h, scrollY, offset, dY, child.getTop());
+
         int childOffSet = (int) -dY;
-        if (dY < 0 && (childTop == 0 || childTop - dY > 0)) {
-            childOffSet = -childTop;
+        int offset = Math.abs(dY);
+
+        // Move to DOWN
+        if (dY < 0) {
+            if (childTop == 0 || childTop + offset > 0) {
+                childOffSet = -childTop;
+            } else {
+                childOffSet = offset;
+            }
         }
-        if (dY > 0 && (childTop - dY < -h + MARGIN_TOP)) {
-            childOffSet = -h - childTop + MARGIN_TOP;
+
+        // Move to UP
+        if (dY > 0 && (childTop - offset < -childHeight + MARGIN_TOP)) {
+            childOffSet = -childHeight - childTop + MARGIN_TOP;
         }
 
         if (dY < 0 && scrollY > 100) {
             childOffSet = 0;
         }
+
+        Timber.d("childHeight=%d, scrollY=%d, offsetUptoChild=%d, dY=%d, childTop=%d, childOffSet=%d",
+                childHeight, scrollY, offsetUptoChild, dY, child.getTop(), childOffSet);
+
         if (childOffSet != 0) {
             ViewCompat.offsetTopAndBottom(child, childOffSet);
             ViewCompat.offsetTopAndBottom(this, childOffSet);
@@ -151,7 +168,7 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
         return false;
     }
 
-    private AppBarLayout getNestedChild() {
+    private AppBarLayout getNestedAppBar() {
         if (mChild == null) {
             ViewGroup parent = (ViewGroup) getParent();
             for (int i = 0; i < parent.getChildCount(); i++) {
