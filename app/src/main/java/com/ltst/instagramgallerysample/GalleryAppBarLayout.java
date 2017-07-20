@@ -14,14 +14,16 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 
 import timber.log.Timber;
 
 public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector.OnGestureListener {
 
-    private static final long SNAP_ANIMATION_DURATION = 500L;
-    private static final int MARGIN_TOP = 160;
+    private static final float SNAP_PERCENT_OF_COLLAPSING = 40.f;
+    private static final long SNAP_ANIMATION_DURATION = 300L;
+    private static final int MARGIN_TOP = 160; // TODO set in dp;
 
     private GestureDetectorCompat mGestureDetector;
 
@@ -29,6 +31,14 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     private boolean mIsFingerDown;
     private int mStartFingerYPosition;
+
+    private Interpolator mSpanAnimationInterpolator = new AccelerateDecelerateInterpolator();
+
+    @Nullable
+    private ValueAnimator mSnapAnimator;
+
+    @Nullable
+    private OnCollapseChangeStateListener mOnCollapseChangeStateListener;
 
     public GalleryAppBarLayout(Context context) {
         super(context);
@@ -47,11 +57,36 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-//        View parent = getNestedScrollingParent();
-//        bindParentAttributes(parent);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+//        final ViewGroup parent = (ViewGroup) getParent();
+//        getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+//            @Override
+//            public boolean onPreDraw() {
+//                getViewTreeObserver().removeOnPreDrawListener(this);
+//                bindParentAttributes(getNestedScrollingParent());
+//                return false;
+//            }
+//        });
+        View parent = getNestedScrollingParent();
+        bindParentAttributes(parent);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
     }
 
     private void bindParentAttributes(View parent) {
+        if (parent == null) return;
+//        bindPaddingToParent(parent);
+        bindOnTouchListenerToParent(parent);
+    }
+
+    private void bindPaddingToParent(View parent) {
         if (parent == null) return;
         if (parent instanceof RecyclerView) {
             RecyclerView recyclerView = (RecyclerView) parent;
@@ -59,62 +94,84 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
                     recyclerView.getPaddingLeft(),
                     recyclerView.getPaddingTop(),
                     recyclerView.getPaddingRight(),
-                    MARGIN_TOP);
+                    getMeasuredHeight());
             recyclerView.setClipToPadding(false);
         } else if (parent instanceof NestedScrollView) {
             NestedScrollView scrollView = (NestedScrollView) parent;
-            int paddingLeft = scrollView.getPaddingLeft();
-            int paddingTop = scrollView.getPaddingTop();
-            int paddingRight = scrollView.getPaddingRight();
+            int paddingBottom = getMeasuredHeight();
             scrollView.setPadding(
-                    paddingLeft,
-                    paddingTop,
-                    paddingRight,
-                    MARGIN_TOP);
+                    scrollView.getPaddingLeft(),
+                    scrollView.getPaddingTop(),
+                    scrollView.getPaddingRight(),
+                    paddingBottom);
             scrollView.setClipToPadding(false);
         }
     }
 
-    private void applySnap() {
-        if (getTop() < -getHeight() / 2) {
+    private void bindOnTouchListenerToParent(View parent) {
+        if (parent == null) return;
+        parent.setOnTouchListener(PARENT_ON_TOUCH_LISTENER);
+    }
+
+    private void applySnapEffect() {
+        float percentOfCollapsing = 100 * Math.abs(getTop()) / (getHeight() - MARGIN_TOP);
+        if (percentOfCollapsing > SNAP_PERCENT_OF_COLLAPSING) {
             collapse();
         } else {
             expand();
         }
     }
 
-    public void expand() {
+    public void setSpanAnimationInterpolator(Interpolator interpolator) {
+        this.mSpanAnimationInterpolator = interpolator;
+    }
 
+    public void setOnCollapseChangeStateListener(@Nullable OnCollapseChangeStateListener listener) {
+        this.mOnCollapseChangeStateListener = listener;
+    }
+
+    public boolean isExpanded() {
+        return getTop() == 0;
+    }
+
+    public boolean isCollapsed() {
+        return !isExpanded();
+    }
+
+    public void expand() {
         final int from = getTop();
         final int to = 0;
-        ValueAnimator animator = ValueAnimator.ofInt(from, to);
-        animator.setInterpolator(new AccelerateInterpolator());
-        animator.setDuration(SNAP_ANIMATION_DURATION);
-        animator.addUpdateListener(
-                new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        applyOffSetChanges(from - (Integer) animation.getAnimatedValue());
-                    }
-                });
-        animator.start();
+        startSnapAnimation(from, to);
     }
 
     public void collapse() {
 
         final int from = getTop();
         final int to = -getHeight() + MARGIN_TOP;
-        ValueAnimator animator = ValueAnimator.ofInt(from, to);
-        animator.setInterpolator(new AccelerateInterpolator());
-        animator.setDuration(SNAP_ANIMATION_DURATION);
-        animator.addUpdateListener(
+        startSnapAnimation(from, to);
+    }
+
+    private void startSnapAnimation(final int from, int to) {
+        stopSnapAnimation();
+        mSnapAnimator = ValueAnimator.ofInt(from, to);
+//        mSnapAnimator.setInterpolator(new BounceInterpolator());
+//        mSnapAnimator.setInterpolator(new AccelerateInterpolator());
+        mSnapAnimator.setInterpolator(mSpanAnimationInterpolator);
+        mSnapAnimator.setDuration(SNAP_ANIMATION_DURATION);
+        mSnapAnimator.addUpdateListener(
                 new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
                         applyOffSetChanges(from - (Integer) animation.getAnimatedValue());
                     }
                 });
-        animator.start();
+        mSnapAnimator.start();
+    }
+
+    private void stopSnapAnimation() {
+        if (mSnapAnimator != null && mSnapAnimator.isRunning()) {
+            mSnapAnimator.cancel();
+        }
     }
 
     @Nullable
@@ -125,11 +182,23 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
                 View childAt = parent.getChildAt(i);
                 if (childAt instanceof NestedScrollingParent) {
                     mParent = childAt;
-//                    bindParentAttributes(mParent);
                 }
             }
         }
         return mParent;
+    }
+
+    private int getNestedScrollingParentTotalScroll() {
+        if (mParent != null) {
+            if (mParent instanceof NestedScrollView) {
+                NestedScrollView horizontalScrollview = (NestedScrollView) this.mParent;
+                return horizontalScrollview.getChildAt(0).getMeasuredHeight();
+            } else if (mParent instanceof RecyclerView) {
+                RecyclerView recyclerView = (RecyclerView) this.mParent;
+                return recyclerView.computeVerticalScrollRange();
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -138,21 +207,21 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
         switch (e.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
+                stopSnapAnimation();
                 mStartFingerYPosition = (int) e.getY();
                 mIsFingerDown = true;
             }
             break;
             case MotionEvent.ACTION_MOVE: {
-                final int oldY = (int) e.getY();
-                final int dY = oldY - mStartFingerYPosition;
-//                mStartFingerYPosition = oldY;
+                final int positionY = (int) e.getY();
+                final int dY = positionY - mStartFingerYPosition;
                 applyOffSetChanges(-dY);
             }
             break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL: {
                 mIsFingerDown = false;
-                applySnap();
+                applySnapEffect();
             }
             break;
             default:
@@ -213,7 +282,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     @Override
     public void onShowPress(MotionEvent motionEvent) {
-
+        // nothing;
     }
 
     @Override
@@ -228,11 +297,69 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     @Override
     public void onLongPress(MotionEvent motionEvent) {
-
+        // nothing;
     }
 
     @Override
     public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
         return false;
     }
+
+    private OnTouchListener PARENT_ON_TOUCH_LISTENER = new OnTouchListener() {
+
+        private int mStartFingerYPositionParent;
+        private boolean mIsOutOfRegion;
+
+        @Override
+        public boolean onTouch(View view, MotionEvent e) {
+            switch (e.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN: {
+                    mStartFingerYPositionParent = (int) e.getY();
+                    mIsFingerDown = true;
+                }
+                break;
+                case MotionEvent.ACTION_MOVE: {
+                    int scrollY = view.getScrollY();
+                    int positionY = (int) e.getY();
+                    int dY = positionY - mStartFingerYPositionParent;
+                    int top = view.getTop();
+                    Timber.d("ParentPositions: top=%d, y=%d, dY=%d", top, positionY, dY);
+                    if (positionY < 0) {
+                        if (!mIsOutOfRegion) {
+                            mIsOutOfRegion = true;
+                            mStartFingerYPositionParent = positionY;
+                            dY = positionY - mStartFingerYPositionParent;
+                        }
+                        applyOffSetChanges(-dY);
+                        return true;
+                    } else {
+                        if (mIsOutOfRegion) {
+                            mIsOutOfRegion = false;
+                        }
+                    }
+                    if (isCollapsed() && scrollY == 0) {
+                        if (dY > 0) {
+                            applyOffSetChanges(-dY);
+                            return true;
+                        }
+                    }
+                }
+                break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL: {
+                    mIsFingerDown = false;
+                    applySnapEffect();
+                }
+                break;
+                default:
+                    break;
+            }
+            return false;
+        }
+    };
+
+    interface OnCollapseChangeStateListener {
+
+    }
+
 }

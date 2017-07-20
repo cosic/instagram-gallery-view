@@ -16,7 +16,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="400dp"
             android:background="#50ff4444"
         />
 
@@ -26,47 +26,72 @@
         android:id="@+id/gallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:clipToPadding="false"
+        android:paddingStart="16dp"
         app:layoutManager="GridLayoutManager">
 
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
+                style="@style/TextViewStyle"
                 android:background="#5099cc00"
-                android:text="1"
-                style="@style/TextViewStyle"/>
+                android:text="1"/>
 
             <TextView
+                style="@style/TextViewStyle"
                 android:background="#5000ddff"
-                android:text="2"
-                style="@style/TextViewStyle"/>
+                android:text="2"/>
 
             <TextView
+                style="@style/TextViewStyle"
                 android:background="#50ffbb33"
-                android:text="3"
-                style="@style/TextViewStyle"/>
+                android:text="3"/>
 
             <TextView
+                style="@style/TextViewStyle"
                 android:background="#50aa66cc"
-                android:text="4"
-                style="@style/TextViewStyle"/>
+                android:text="4"/>
 
             <TextView
+                style="@style/TextViewStyle"
                 android:background="#504ef3fc"
-                android:text="5"
-                style="@style/TextViewStyle"/>
+                android:text="5"/>
 
             <TextView
+                style="@style/TextViewStyle"
                 android:background="#503ffc19"
-                android:text="6"
-                style="@style/TextViewStyle"/>
+                android:text="6"/>
 
         </LinearLayout>
 
     </com.ltst.instagramgallerysample.GalleryRecyclerView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/collapse_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Collapse"
+        />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/expand_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expand"
+        />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
