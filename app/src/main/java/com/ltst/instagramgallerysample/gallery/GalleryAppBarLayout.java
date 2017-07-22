@@ -25,14 +25,16 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     private static final float SNAP_PERCENT_OF_COLLAPSING = 40.f;
     private static final long SNAP_ANIMATION_DURATION = 300L;
-    private static final int MARGIN_TOP = dpToPx(56);
 
     private GestureDetectorCompat mGestureDetector;
 
     private View mParent;
 
     private boolean mIsFingerDown;
+
     private int mStartFingerYPosition;
+
+    private int mAirSpace = dpToPx(56);
 
     private Interpolator mSpanAnimationInterpolator = new AccelerateDecelerateInterpolator();
 
@@ -42,17 +44,14 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     @Nullable
     private OnCollapseChangeStateListener mOnCollapseChangeStateListener;
 
+    private int mLastOffSet;
+
     public GalleryAppBarLayout(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
 
     public GalleryAppBarLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
-    }
-
-    private void init(Context context) {
         mGestureDetector = new GestureDetectorCompat(context, this);
     }
 
@@ -116,7 +115,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     }
 
     private void applySnapEffect() {
-        float percentOfCollapsing = 100 * Math.abs(getTop()) / (getHeight() - MARGIN_TOP);
+        float percentOfCollapsing = 100 * Math.abs(getTop()) / (getHeight() - mAirSpace);
         if (percentOfCollapsing > SNAP_PERCENT_OF_COLLAPSING) {
             collapse();
         } else {
@@ -132,12 +131,16 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
         this.mOnCollapseChangeStateListener = listener;
     }
 
+    public void setAirSpace(final int airSpace) {
+        mAirSpace = airSpace;
+    }
+
     public boolean isExpanded() {
         return getTop() == 0;
     }
 
     public boolean isCollapsed() {
-        return !isExpanded();
+        return getTop() == mAirSpace - getHeight();
     }
 
     public void expand() {
@@ -149,7 +152,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     public void collapse() {
 
         final int from = getTop();
-        final int to = -getHeight() + MARGIN_TOP;
+        final int to = -getHeight() + mAirSpace;
         startSnapAnimation(from, to);
     }
 
@@ -241,41 +244,42 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     private void applyOffSetChanges(int dY) {
         View parent = getNestedScrollingParent();
         if (parent == null) return;
-        int childHeight = getHeight();
-        int childTop = getTop();
-        int childBottom = getBottom();
+        int height = getHeight();
+        int top = getTop();
         int scrollY = parent.getScrollY();
-        int offsetUptoChild = getBottom() - parent.getTop();
-        int verticalScrollOffset = computeVerticalScrollOffset();
 
-        int childOffSet = (int) -dY;
+        int childOffSet = -dY;
         int offset = Math.abs(dY);
 
         // Move to DOWN
         if (dY < 0) {
-            if (childTop == 0 || childTop + offset > 0) {
-                childOffSet = -childTop;
+            if (top == 0 || top + offset > 0) {
+                childOffSet = -top;
             } else {
                 childOffSet = offset;
             }
         }
 
         // Move to UP
-        if (dY > 0 && (childTop - offset < -childHeight + MARGIN_TOP)) {
-            childOffSet = -childHeight - childTop + MARGIN_TOP;
+        if (dY > 0 && (top - offset < -height + mAirSpace)) {
+            childOffSet = -height - top + mAirSpace;
         }
 
-//        if (dY < 0 && scrollY > 100) {
-//            childOffSet = 0;
-//        }
-
-        Timber.d("childHeight=%d, scrollY=%d, offsetUptoChild=%d, dY=%d, childTop=%d, childOffSet=%d",
-                childHeight, scrollY, offsetUptoChild, dY, parent.getTop(), childOffSet);
+        Timber.d("height=%d, scrollY=%d, dY=%d, top=%d, childOffSet=%d",
+                height, scrollY, dY, parent.getTop(), childOffSet);
 
         if (childOffSet != 0) {
             ViewCompat.offsetTopAndBottom(parent, childOffSet);
             ViewCompat.offsetTopAndBottom(this, childOffSet);
         }
+        if (mOnCollapseChangeStateListener != null && mLastOffSet != 0 && childOffSet == 0) {
+            if (isCollapsed()) {
+                mOnCollapseChangeStateListener.onCollapsed();
+            } else if (isExpanded()) {
+                mOnCollapseChangeStateListener.onExpended();
+            }
+        }
+        mLastOffSet = childOffSet;
     }
 
     @Override
@@ -377,8 +381,11 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
-    interface OnCollapseChangeStateListener {
+    public interface OnCollapseChangeStateListener {
 
+        void onCollapsed();
+
+        void onExpended();
     }
 
 }

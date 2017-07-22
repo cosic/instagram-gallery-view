@@ -12,6 +12,8 @@ import com.ltst.instagramgallerysample.gallery.GalleryAppBarLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -24,6 +26,17 @@ public class MainActivity extends AppCompatActivity {
 //        final NestedScrollView gallery = findViewById(R.id.gallery);
         final RecyclerView gallery = findViewById(R.id.gallery);
         final GalleryAppBarLayout appBarLayout = findViewById(R.id.appbar);
+        appBarLayout.setOnCollapseChangeStateListener(new GalleryAppBarLayout.OnCollapseChangeStateListener() {
+            @Override
+            public void onCollapsed() {
+                Timber.d("OnCollapseChangeStateListener: collapsed");
+            }
+
+            @Override
+            public void onExpended() {
+                Timber.d("OnCollapseChangeStateListener: expended");
+            }
+        });
 
         collapseButton.setOnClickListener(new View.OnClickListener() {
             @Override
