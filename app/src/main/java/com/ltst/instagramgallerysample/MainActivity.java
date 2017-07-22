@@ -6,6 +6,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.ltst.instagramgallerysample.gallery.GalleryAppBarLayout;
 
@@ -23,8 +24,11 @@ public class MainActivity extends AppCompatActivity {
 
         final Button collapseButton = findViewById(R.id.collapse_button);
         final Button expandButton = findViewById(R.id.expand_button);
-//        final NestedScrollView gallery = findViewById(R.id.gallery);
-        final RecyclerView gallery = findViewById(R.id.gallery);
+//        final NestedScrollView recyclerView = findViewById(R.id.recyclerView);
+        final RecyclerView recyclerView = findViewById(R.id.gallery);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(layoutManager);
+
         final GalleryAppBarLayout appBarLayout = findViewById(R.id.appbar);
         appBarLayout.setOnCollapseChangeStateListener(new GalleryAppBarLayout.OnCollapseChangeStateListener() {
             @Override
@@ -52,13 +56,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
         GalleryAdapter adapter = new GalleryAdapter(this);
-        gallery.setLayoutManager(new GridLayoutManager(this, 3));
-        gallery.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
+        adapter.setOnGalleryClickListener(new GalleryAdapter.OnGalleryClickListener() {
+            @Override
+            public void onClick(final int position, final GalleryData item) {
+                Toast.makeText(MainActivity.this, "Click by " + item.value, Toast.LENGTH_SHORT).show();
+                appBarLayout.expand();
+//                layoutManager.scrollToPosition(position);
+                recyclerView.scrollToPosition(position);
+            }
+        });
 
         List<GalleryData> items = new ArrayList<>();
         int count = 60;
         for (int i = 0; i < count; i++) {
-            items.add(new GalleryData());
+            items.add(new GalleryData(i + 1));
         }
         adapter.addAll(items);
         adapter.notifyDataSetChanged();
