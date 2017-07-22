@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
+        app:gallery_airspace="@dimen/appbar_top_airspace"
         app:elevation="0dp">
 
         <View

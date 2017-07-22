@@ -3,6 +3,7 @@ package com.ltst.instagramgallerysample.gallery;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.GestureDetectorCompat;
@@ -19,6 +20,8 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 
+import com.ltst.instagramgallerysample.R;
+
 import timber.log.Timber;
 
 public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector.OnGestureListener {
@@ -34,7 +37,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     private int mStartFingerYPosition;
 
-    private int mAirSpace = dpToPx(56);
+    private int mAirSpace;
 
     private Interpolator mSpanAnimationInterpolator = new AccelerateDecelerateInterpolator();
 
@@ -53,6 +56,15 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     public GalleryAppBarLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mGestureDetector = new GestureDetectorCompat(context, this);
+
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.GalleryAppBarLayout, 0, 0);
+
+        try {
+            mAirSpace = a.getDimensionPixelOffset(R.styleable.GalleryAppBarLayout_gallery_airspace, dpToPx(56));
+        } finally {
+            a.recycle();
+        }
+
     }
 
     @Override

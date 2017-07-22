@@ -4,29 +4,29 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class CustomRecyclerView extends RecyclerView {
+public class GalleryNestedScrollView extends NestedScrollView {
 
     private AppBarLayout mChild;
 
-    public CustomRecyclerView(final Context context) {
+    public GalleryNestedScrollView(Context context) {
         super(context);
     }
 
-    public CustomRecyclerView(final Context context, @Nullable final AttributeSet attrs) {
+    public GalleryNestedScrollView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomRecyclerView(final Context context, @Nullable final AttributeSet attrs, final int defStyle) {
+    public GalleryNestedScrollView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
     @Override
-    protected void onLayout(final boolean changed, final int l, final int t, final int r, final int b) {
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
         AppBarLayout child = getNestedAppBar();
         if (child != null) {
@@ -49,5 +49,4 @@ public class CustomRecyclerView extends RecyclerView {
         }
         return mChild;
     }
-
 }
