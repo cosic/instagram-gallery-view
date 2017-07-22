@@ -1,10 +1,12 @@
-package com.ltst.instagramgallerysample;
+package com.ltst.instagramgallerysample.gallery;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -23,7 +25,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     private static final float SNAP_PERCENT_OF_COLLAPSING = 40.f;
     private static final long SNAP_ANIMATION_DURATION = 300L;
-    private static final int MARGIN_TOP = 160; // TODO set in dp;
+    private static final int MARGIN_TOP = dpToPx(56);
 
     private GestureDetectorCompat mGestureDetector;
 
@@ -180,7 +182,8 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
             ViewGroup parent = (ViewGroup) getParent();
             for (int i = 0; i < parent.getChildCount(); i++) {
                 View childAt = parent.getChildAt(i);
-                if (childAt instanceof NestedScrollingParent) {
+                if (childAt instanceof NestedScrollingParent
+                        || childAt instanceof NestedScrollingChild) {
                     mParent = childAt;
                 }
             }
@@ -319,16 +322,25 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
                 }
                 break;
                 case MotionEvent.ACTION_MOVE: {
-                    int scrollY = view.getScrollY();
+                    int scrollY = 0;
+                    if (view instanceof NestedScrollingParent) {
+                        scrollY = view.getScrollY();
+                    } else if (view instanceof RecyclerView) {
+                        scrollY = ((RecyclerView) view).computeVerticalScrollOffset();
+                    }
                     int positionY = (int) e.getY();
                     int dY = positionY - mStartFingerYPositionParent;
                     int top = view.getTop();
-                    Timber.d("ParentPositions: top=%d, y=%d, dY=%d", top, positionY, dY);
+                    Timber.d("ParentPositions: scrollY=%d, top=%d, y=%d, dY=%d", scrollY, top, positionY, dY);
+
+                    // Если скролим ввер и палец вышел
+                    // из региона скролинга списка
+                    // то передаем смещение пальца в AppBar
                     if (positionY < 0) {
                         if (!mIsOutOfRegion) {
                             mIsOutOfRegion = true;
                             mStartFingerYPositionParent = positionY;
-                            dY = positionY - mStartFingerYPositionParent;
+                            dY = 0;
                         }
                         applyOffSetChanges(-dY);
                         return true;
@@ -337,6 +349,9 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
                             mIsOutOfRegion = false;
                         }
                     }
+                    // Если скролим вниз и достигли
+                    // начала списка, то то передаем
+                    // смещение пальца в AppBar
                     if (isCollapsed() && scrollY == 0) {
                         if (dY > 0) {
                             applyOffSetChanges(-dY);
@@ -357,6 +372,10 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
             return false;
         }
     };
+
+    static public int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
 
     interface OnCollapseChangeStateListener {
 

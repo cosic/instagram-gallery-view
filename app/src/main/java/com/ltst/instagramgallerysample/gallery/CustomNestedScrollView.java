@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample;
+package com.ltst.instagramgallerysample.gallery;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import timber.log.Timber;
 
-public class GalleryRecyclerView extends NestedScrollView implements GestureDetector.OnGestureListener {
+public class CustomNestedScrollView extends NestedScrollView implements GestureDetector.OnGestureListener {
 
     private static final int MARGIN_TOP = 160;
 
@@ -25,17 +25,17 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
     private boolean mIsFingerDown;
     private int mStartFingerYPosition;
 
-    public GalleryRecyclerView(Context context) {
+    public CustomNestedScrollView(Context context) {
         super(context);
         init(context);
     }
 
-    public GalleryRecyclerView(Context context, @Nullable AttributeSet attrs) {
+    public CustomNestedScrollView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public GalleryRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public CustomNestedScrollView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }
@@ -49,10 +49,6 @@ public class GalleryRecyclerView extends NestedScrollView implements GestureDete
         super.onLayout(changed, l, t, r, b);
         AppBarLayout child = getNestedAppBar();
         if (child != null) {
-//            int offset = child.getBottom() - getTop();
-//            int verticalScrollOffset = computeVerticalScrollOffset();
-//            Timber.d("offset=%d, verticalScrollOffset=%d, childTop=%d",
-//                    offset, verticalScrollOffset, child.getTop());
             ViewCompat.offsetTopAndBottom(this, child.getBottom() - getTop());
             ViewGroup.LayoutParams lp = getLayoutParams();
             lp.height += child.getHeight();

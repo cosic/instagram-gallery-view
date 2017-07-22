@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ltst.instagramgallerysample.gallery.CustomNestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gallery"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp"
+    app:layoutManager="GridLayoutManager">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/TextViewStyle"
+            android:background="#5099cc00"
+            android:text="1"/>
+
+        <TextView
+            style="@style/TextViewStyle"
+            android:background="#5000ddff"
+            android:text="2"/>
+
+        <TextView
+            style="@style/TextViewStyle"
+            android:background="#50ffbb33"
+            android:text="3"/>
+
+        <TextView
+            style="@style/TextViewStyle"
+            android:background="#50aa66cc"
+            android:text="4"/>
+
+        <TextView
+            style="@style/TextViewStyle"
+            android:background="#504ef3fc"
+            android:text="5"/>
+
+        <TextView
+            style="@style/TextViewStyle"
+            android:background="#503ffc19"
+            android:text="6"/>
+
+    </LinearLayout>
+
+</com.ltst.instagramgallerysample.gallery.CustomNestedScrollView>
