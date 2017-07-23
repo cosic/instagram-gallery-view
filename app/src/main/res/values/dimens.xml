@@ -2,4 +2,5 @@
 <resources>
     <dimen name="appbar_top_airspace">56dp</dimen>
     <dimen name="divider_size">8dp</dimen>
+    <integer name="span_count">3</integer>
 </resources>
