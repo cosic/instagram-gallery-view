@@ -48,6 +48,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     private OnCollapseChangeStateListener mOnCollapseChangeStateListener;
 
     private int mLastOffSet;
+    private int mLastTopPosition;
 
     public GalleryAppBarLayout(Context context) {
         this(context, null);
@@ -64,7 +65,6 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
         } finally {
             a.recycle();
         }
-
     }
 
     @Override
@@ -91,6 +91,14 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+    }
+
+    @Override
+    protected void onLayout(final boolean changed, final int l, final int t, final int r, final int b) {
+        super.onLayout(changed, l, t, r, b);
+        int top = getTop();
+        Timber.d("onLayout, top=%d, mLastTopPosition=%d", top, mLastTopPosition);
+        ViewCompat.offsetTopAndBottom(this, top + mLastTopPosition);
     }
 
     private void bindParentAttributes(View parent) {
@@ -123,7 +131,10 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     private void bindOnTouchListenerToParent(View parent) {
         if (parent == null) return;
-        parent.setOnTouchListener(PARENT_ON_TOUCH_LISTENER);
+        if (parent instanceof GalleryRecyclerView) {
+//            parent.setOnTouchListener(PARENT_ON_TOUCH_LISTENER);
+            ((GalleryRecyclerView)parent).setOnDispatchTouchListener(PARENT_ON_TOUCH_LISTENER);
+        }
     }
 
     private void applySnapEffect() {
@@ -170,6 +181,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     private void startSnapAnimation(final int from, int to) {
         stopSnapAnimation();
+        final int[] lastState = {from};
         mSnapAnimator = ValueAnimator.ofInt(from, to);
 //        mSnapAnimator.setInterpolator(new BounceInterpolator());
 //        mSnapAnimator.setInterpolator(new AccelerateInterpolator());
@@ -179,7 +191,9 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
                 new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-                        applyOffSetChanges(from - (Integer) animation.getAnimatedValue());
+                        Integer animatedValue = (Integer) animation.getAnimatedValue();
+                        applyOffSetChanges(lastState[0] - animatedValue);
+                        lastState[0] = animatedValue;
                     }
                 });
         mSnapAnimator.start();
@@ -277,12 +291,12 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
             childOffSet = -height - top + mAirSpace;
         }
 
-        Timber.d("height=%d, scrollY=%d, dY=%d, top=%d, childOffSet=%d",
+        Timber.d("Child: height=%d, scrollY=%d, dY=%d, parentTop=%d, childOffSet=%d",
                 height, scrollY, dY, parent.getTop(), childOffSet);
 
         if (childOffSet != 0) {
-            ViewCompat.offsetTopAndBottom(parent, childOffSet);
             ViewCompat.offsetTopAndBottom(this, childOffSet);
+            ViewCompat.offsetTopAndBottom(parent, getBottom() - parent.getTop());
         }
         if (mOnCollapseChangeStateListener != null && mLastOffSet != 0 && childOffSet == 0) {
             if (isCollapsed()) {
@@ -292,6 +306,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
             }
         }
         mLastOffSet = childOffSet;
+        mLastTopPosition = getTop();
     }
 
     @Override
@@ -324,16 +339,18 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
         return false;
     }
 
-    private OnTouchListener PARENT_ON_TOUCH_LISTENER = new OnTouchListener() {
+    private GalleryRecyclerView.OnDispatchTouchListener PARENT_ON_TOUCH_LISTENER =
+            new GalleryRecyclerView.OnDispatchTouchListener() {
 
         private int mStartFingerYPositionParent;
         private boolean mIsOutOfRegion;
 
         @Override
-        public boolean onTouch(View view, MotionEvent e) {
+        public boolean onDispatchTouchEvent(View view, MotionEvent e) {
             switch (e.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN: {
                     mStartFingerYPositionParent = (int) e.getY();
+                    Timber.d("ParentPositions: startFingerYPosition =%d", mStartFingerYPositionParent);
                     mIsFingerDown = true;
                 }
                 break;
@@ -347,7 +364,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
                     int positionY = (int) e.getY();
                     int dY = positionY - mStartFingerYPositionParent;
                     int top = view.getTop();
-                    Timber.d("ParentPositions: scrollY=%d, top=%d, y=%d, dY=%d", scrollY, top, positionY, dY);
+                    Timber.d("ParentPositions: scrollY=%d, top=%d, positionY=%d, dY=%d", scrollY, top, positionY, dY);
 
                     // Если скролим ввер и палец вышел
                     // из региона скролинга списка
@@ -366,9 +383,9 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
                         }
                     }
                     // Если скролим вниз и достигли
-                    // начала списка, то то передаем
+                    // начала списка, то передаем
                     // смещение пальца в AppBar
-                    if (isCollapsed() && scrollY == 0) {
+                    if (!isExpanded() && scrollY == 0) {
                         if (dY > 0) {
                             applyOffSetChanges(-dY);
                             return true;

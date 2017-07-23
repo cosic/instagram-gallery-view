@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample;
+package com.ltst.instagramgallerysample.utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

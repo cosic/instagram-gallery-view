@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.ltst.instagramgallerysample.data.GalleryData;
 import com.ltst.instagramgallerysample.gallery.GalleryAppBarLayout;
+import com.ltst.instagramgallerysample.utils.GridSpacingItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         final RecyclerView recyclerView = findViewById(R.id.gallery);
         final GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(
+                3, getResources().getDimensionPixelSize(R.dimen.divider_size), false));
 
         final GalleryAppBarLayout appBarLayout = findViewById(R.id.appbar);
         appBarLayout.setOnCollapseChangeStateListener(new GalleryAppBarLayout.OnCollapseChangeStateListener() {
@@ -62,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(final int position, final GalleryData item) {
                 Toast.makeText(MainActivity.this, "Click by " + item.value, Toast.LENGTH_SHORT).show();
                 appBarLayout.expand();
-//                layoutManager.scrollToPosition(position);
-                recyclerView.scrollToPosition(position);
+                layoutManager.scrollToPositionWithOffset(position, 0);
             }
         });
 

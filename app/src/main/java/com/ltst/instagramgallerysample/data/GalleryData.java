@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample;
+package com.ltst.instagramgallerysample.data;
 
 public class GalleryData {
 
