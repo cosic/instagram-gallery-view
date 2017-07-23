@@ -1,9 +1,12 @@
 package com.ltst.instagramgallerysample;
 
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -32,6 +35,25 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(
                 3, getResources().getDimensionPixelSize(R.dimen.divider_size), false));
+
+        final RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(this) {
+
+            private static final float MILLISECONDS_PER_INCH = 50f; //default is 25f (bigger = slower)
+
+            @Override protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+
+            @Override
+            public PointF computeScrollVectorForPosition(int targetPosition) {
+                return super.computeScrollVectorForPosition(targetPosition);
+            }
+
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                return MILLISECONDS_PER_INCH / displayMetrics.densityDpi;
+            }
+        };
 
         final GalleryAppBarLayout appBarLayout = findViewById(R.id.appbar);
         appBarLayout.setOnCollapseChangeStateListener(new GalleryAppBarLayout.OnCollapseChangeStateListener() {
@@ -66,7 +88,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(final int position, final GalleryData item) {
                 Toast.makeText(MainActivity.this, "Click by " + item.value, Toast.LENGTH_SHORT).show();
                 appBarLayout.expand();
-                layoutManager.scrollToPositionWithOffset(position, 0);
+//                layoutManager.scrollToPositionWithOffset(position, 0);
+//                recyclerView.smoothScrollToPosition(position);
+                smoothScroller.setTargetPosition(position);
+                layoutManager.startSmoothScroll(smoothScroller);
             }
         });
 
