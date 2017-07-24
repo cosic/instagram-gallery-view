@@ -32,6 +32,13 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     private static final float SNAP_PERCENT_OF_COLLAPSING = 40.f;
     private static final long SNAP_ANIMATION_DURATION = 300L;
 
+    private enum MoveEventState {
+        COLLAPSED,
+        MOVE_UP,
+        MOVE_DOWN,
+        EXPANDED
+    }
+
     private GestureDetectorCompat mGestureDetector;
 
     private View mParent;
@@ -52,6 +59,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     private int mLastOffSet;
     private int mLastTopPosition;
+    private MoveEventState mLastMoveEventState;
 
     public GalleryAppBarLayout(Context context) {
         this(context, null);
@@ -161,7 +169,11 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     private void applySnapEffect() {
         float percentOfCollapsing = 100 * Math.abs(getTop()) / (getHeight() - mAirSpace);
-        if (percentOfCollapsing > SNAP_PERCENT_OF_COLLAPSING) {
+        if (mLastMoveEventState == MoveEventState.MOVE_UP) {
+            collapse();
+        } else if (mLastMoveEventState == MoveEventState.MOVE_DOWN) {
+            expand();
+        } else if (percentOfCollapsing > SNAP_PERCENT_OF_COLLAPSING) {
             collapse();
         } else {
             expand();
@@ -292,6 +304,9 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     private void applyOffSetChanges(int dY) {
         View parent = getNestedScrollingParent();
         if (parent == null) return;
+
+        mLastMoveEventState = dY > 0 ? MoveEventState.MOVE_UP : MoveEventState.MOVE_DOWN;
+
         int height = getHeight();
         int top = getTop();
         int scrollY = parent.getScrollY();
@@ -320,6 +335,13 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
             ViewCompat.offsetTopAndBottom(this, childOffSet);
             ViewCompat.offsetTopAndBottom(parent, getBottom() - parent.getTop());
         }
+
+        if (isExpanded()) {
+            mLastMoveEventState = MoveEventState.EXPANDED;
+        } else if (isCollapsed()) {
+            mLastMoveEventState = MoveEventState.COLLAPSED;
+        }
+
         if (mOnCollapseChangeStateListener != null && mLastOffSet != 0 && childOffSet == 0) {
             if (isCollapsed()) {
                 mOnCollapseChangeStateListener.onCollapsed();
@@ -407,7 +429,8 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
                     // Если скролим вниз и достигли
                     // начала списка, то передаем
                     // смещение пальца в AppBar
-                    if (!isExpanded() && scrollY == 0) {
+
+                    if (!isExpanded() && scrollY == 0) { // Here !isExpanded() doesn't mean isCollapsed().
                         if (dY > 0) {
                             applyOffSetChanges(-dY);
                             return true;
