@@ -4,6 +4,8 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.GestureDetectorCompat;
@@ -26,6 +28,7 @@ import timber.log.Timber;
 
 public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector.OnGestureListener {
 
+    private static final int DEFAULT_AIR_SPACE_DP = 56;
     private static final float SNAP_PERCENT_OF_COLLAPSING = 40.f;
     private static final long SNAP_ANIMATION_DURATION = 300L;
 
@@ -56,15 +59,34 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     public GalleryAppBarLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        setSaveEnabled(true);
+
         mGestureDetector = new GestureDetectorCompat(context, this);
 
-        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.GalleryAppBarLayout, 0, 0);
+        TypedArray a = context.getTheme().obtainStyledAttributes(
+                attrs, R.styleable.GalleryAppBarLayout, 0, 0);
 
         try {
-            mAirSpace = a.getDimensionPixelOffset(R.styleable.GalleryAppBarLayout_gallery_airspace, dpToPx(56));
+            mAirSpace = a.getDimensionPixelOffset(
+                    R.styleable.GalleryAppBarLayout_gallery_airspace, dpToPx(DEFAULT_AIR_SPACE_DP));
         } finally {
             a.recycle();
         }
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.setLastTopPosition(mLastTopPosition);
+        return ss;
+    }
+
+    public void onRestoreInstanceState(Parcelable state) {
+        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+        mLastTopPosition = ss.getLastTopPosition();
     }
 
     @Override
@@ -408,6 +430,44 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     static public int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public final static class SavedState extends BaseSavedState {
+
+        private int mLastTopPosition;
+
+        public SavedState(final Parcelable superState) {
+            super(superState);
+        }
+
+        public SavedState(final Parcel in) {
+            super(in);
+            mLastTopPosition = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(mLastTopPosition);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+
+        public int getLastTopPosition() {
+            return mLastTopPosition;
+        }
+
+        public void setLastTopPosition(final int lastTopPosition) {
+            mLastTopPosition = lastTopPosition;
+        }
     }
 
     public interface OnCollapseChangeStateListener {
