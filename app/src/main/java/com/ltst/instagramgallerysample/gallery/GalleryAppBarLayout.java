@@ -19,6 +19,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 
@@ -133,30 +134,39 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
 
     private void bindParentAttributes(View parent) {
         if (parent == null) return;
-//        bindPaddingToParent(parent);
+        bindPaddingToParent(parent);
         bindOnTouchListenerToParent(parent);
     }
 
     private void bindPaddingToParent(View parent) {
         if (parent == null) return;
         if (parent instanceof RecyclerView) {
-            RecyclerView recyclerView = (RecyclerView) parent;
-            recyclerView.setPadding(
-                    recyclerView.getPaddingLeft(),
-                    recyclerView.getPaddingTop(),
-                    recyclerView.getPaddingRight(),
-                    getMeasuredHeight());
-            recyclerView.setClipToPadding(false);
-        } else if (parent instanceof NestedScrollView) {
-            NestedScrollView scrollView = (NestedScrollView) parent;
-            int paddingBottom = getMeasuredHeight();
-            scrollView.setPadding(
-                    scrollView.getPaddingLeft(),
-                    scrollView.getPaddingTop(),
-                    scrollView.getPaddingRight(),
-                    paddingBottom);
-            scrollView.setClipToPadding(false);
+            final RecyclerView recyclerView = (RecyclerView) parent;
+            getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    getViewTreeObserver().removeOnPreDrawListener(this);
+                    int measuredHeight = getMeasuredHeight();
+                    recyclerView.setPadding(
+                            recyclerView.getPaddingLeft(),
+                            recyclerView.getPaddingTop(),
+                            recyclerView.getPaddingRight(),
+                            measuredHeight);
+                    recyclerView.setClipToPadding(false);
+                    return false;
+                }
+            });
         }
+//        else if (parent instanceof NestedScrollView) {
+//            NestedScrollView scrollView = (NestedScrollView) parent;
+//            int paddingBottom = getMeasuredHeight();
+//            scrollView.setPadding(
+//                    scrollView.getPaddingLeft(),
+//                    scrollView.getPaddingTop(),
+//                    scrollView.getPaddingRight(),
+//                    paddingBottom);
+//            scrollView.setClipToPadding(false);
+//        }
     }
 
     private void bindOnTouchListenerToParent(View parent) {

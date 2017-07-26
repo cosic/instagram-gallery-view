@@ -1,11 +1,14 @@
 package com.ltst.instagramgallerysample.gallery;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +20,21 @@ public class GalleryRecyclerView extends RecyclerView {
     @Nullable
     private OnDispatchTouchListener mOnDispatchTouchListener;
 
+    private RecyclerView.SmoothScroller mSmoothScroller;
+
     private AppBarLayout mChild;
 
     public GalleryRecyclerView(final Context context) {
-        super(context);
+        this(context, null);
     }
 
     public GalleryRecyclerView(final Context context, @Nullable final AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public GalleryRecyclerView(final Context context, @Nullable final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
+        mSmoothScroller = new GallerySmoothScroller(context);
     }
 
     @Override
@@ -60,6 +66,13 @@ public class GalleryRecyclerView extends RecyclerView {
             }
         }
         return mChild;
+    }
+
+    public void scrollToPosition(int position) {
+        LayoutManager lm = getLayoutManager();
+        if (lm == null) return;
+        mSmoothScroller.setTargetPosition(position);
+        lm.startSmoothScroll(mSmoothScroller);
     }
 
     @Override
@@ -125,5 +138,28 @@ public class GalleryRecyclerView extends RecyclerView {
 
     public interface OnDispatchTouchListener {
         boolean onDispatchTouchEvent(View view, MotionEvent e);
+    }
+
+    public static class GallerySmoothScroller extends LinearSmoothScroller {
+
+        private static final float MILLISECONDS_PER_INCH = 50f; //default is 25f (bigger == slower)
+
+        public GallerySmoothScroller(final Context context) {
+            super(context);
+        }
+
+        @Override protected int getVerticalSnapPreference() {
+            return LinearSmoothScroller.SNAP_TO_START;
+        }
+
+        @Override
+        public PointF computeScrollVectorForPosition(int targetPosition) {
+            return super.computeScrollVectorForPosition(targetPosition);
+        }
+
+        @Override
+        protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+            return MILLISECONDS_PER_INCH / displayMetrics.densityDpi;
+        }
     }
 }

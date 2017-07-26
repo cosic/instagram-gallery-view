@@ -3,14 +3,14 @@ package com.ltst.instagramgallerysample;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.ltst.instagramgallerysample.data.GalleryData;
 import com.ltst.instagramgallerysample.gallery.GalleryAppBarLayout;
-import com.ltst.instagramgallerysample.gallery.GallerySmoothScroller;
+import com.ltst.instagramgallerysample.gallery.GalleryRecyclerView;
+import com.ltst.instagramgallerysample.utils.EndlessRecyclerScrollListener;
 import com.ltst.instagramgallerysample.utils.GridSpacingItemDecoration;
 
 import java.util.ArrayList;
@@ -26,15 +26,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final int spanCount = getResources().getInteger(R.integer.span_count);
-        final Button collapseButton = findViewById(R.id.collapse_button);
-        final Button expandButton = findViewById(R.id.expand_button);
-        final RecyclerView recyclerView = findViewById(R.id.gallery);
-        final GridLayoutManager layoutManager = new GridLayoutManager(this, spanCount);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(
-                spanCount, getResources().getDimensionPixelSize(R.dimen.divider_size), false));
-
-        final RecyclerView.SmoothScroller smoothScroller = new GallerySmoothScroller(this);
 
         final GalleryAppBarLayout appBarLayout = findViewById(R.id.appbar);
         appBarLayout.setOnCollapseChangeStateListener(new GalleryAppBarLayout.OnCollapseChangeStateListener() {
@@ -46,6 +37,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onExpended() {
                 Timber.d("OnCollapseChangeStateListener: expended");
+            }
+        });
+
+        final Button collapseButton = findViewById(R.id.collapse_button);
+        final Button expandButton = findViewById(R.id.expand_button);
+        final GalleryRecyclerView recyclerView = findViewById(R.id.gallery);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, spanCount);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(
+                spanCount, getResources().getDimensionPixelSize(R.dimen.divider_size), false));
+
+        recyclerView.addOnScrollListener(new EndlessRecyclerScrollListener(layoutManager, 0) {
+            @Override
+            protected void onScrolledToEndChanged(final boolean isEnded) {
+                if (isEnded) {
+                    appBarLayout.expand();
+                }
             }
         });
 
@@ -69,8 +77,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(final int position, final GalleryData item) {
                 Toast.makeText(MainActivity.this, "Click by " + item.value, Toast.LENGTH_SHORT).show();
                 appBarLayout.expand();
-                smoothScroller.setTargetPosition(position);
-                layoutManager.startSmoothScroll(smoothScroller);
+                recyclerView.scrollToPosition(position);
             }
         });
 
