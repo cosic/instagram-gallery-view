@@ -13,7 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import timber.log.Timber;
+import com.ltst.instagramgallerysample.utils.Logger;
 
 public class GalleryRecyclerView extends RecyclerView {
 
@@ -46,7 +46,7 @@ public class GalleryRecyclerView extends RecyclerView {
             int childHeight = child.getHeight();
             int childBottom = child.getBottom();
             int top = getTop();
-            Timber.d("onLayout, childBottom=%d childTop=%d, childHeight=%d, top=%d",
+            Logger.d("onLayout, childBottom=%d childTop=%d, childHeight=%d, top=%d",
                     childBottom, childTop, childHeight, top);
             ViewCompat.offsetTopAndBottom(this, childBottom - top);
 //            ViewGroup.LayoutParams lp = getLayoutParams();
@@ -85,13 +85,13 @@ public class GalleryRecyclerView extends RecyclerView {
 
         switch (e.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                Timber.d("GalleryRecyclerView: onTouchEvent ACTION_DOWN");
+                Logger.d("GalleryRecyclerView: onTouchEvent ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                Timber.d("GalleryRecyclerView: onTouchEvent ACTION_UP");
+                Logger.d("GalleryRecyclerView: onTouchEvent ACTION_UP");
                 break;
         }
         return super.onTouchEvent(e);
@@ -104,13 +104,13 @@ public class GalleryRecyclerView extends RecyclerView {
                 if (mOnDispatchTouchListener != null) {
                     mOnDispatchTouchListener.onDispatchTouchEvent(this, e);
                 }
-                Timber.d("GalleryRecyclerView: dispatchTouchEvent ACTION_DOWN");
+                Logger.d("GalleryRecyclerView: dispatchTouchEvent ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                Timber.d("GalleryRecyclerView: dispatchTouchEvent ACTION_UP");
+                Logger.d("GalleryRecyclerView: dispatchTouchEvent ACTION_UP");
                 break;
         }
         return super.dispatchTouchEvent(e);
@@ -120,13 +120,13 @@ public class GalleryRecyclerView extends RecyclerView {
     public boolean onInterceptTouchEvent(MotionEvent e) {
         switch (e.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                Timber.d("GalleryRecyclerView: onInterceptTouchEvent ACTION_DOWN");
+                Logger.d("GalleryRecyclerView: onInterceptTouchEvent ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                Timber.d("GalleryRecyclerView: onInterceptTouchEvent ACTION_UP");
+                Logger.d("GalleryRecyclerView: onInterceptTouchEvent ACTION_UP");
                 break;
         }
         return super.onInterceptTouchEvent(e);

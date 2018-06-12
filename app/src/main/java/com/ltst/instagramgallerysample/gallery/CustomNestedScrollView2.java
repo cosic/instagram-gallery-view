@@ -12,7 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import timber.log.Timber;
+import com.ltst.instagramgallerysample.utils.Logger;
 
 public class CustomNestedScrollView2 extends NestedScrollView implements GestureDetector.OnGestureListener {
 
@@ -145,7 +145,7 @@ public class CustomNestedScrollView2 extends NestedScrollView implements Gesture
             childOffSet = 0;
         }
 
-        Timber.d("childHeight=%d, scrollY=%d, offsetUptoChild=%d, dY=%d, childTop=%d, childOffSet=%d",
+        Logger.d("childHeight=%d, scrollY=%d, offsetUptoChild=%d, dY=%d, childTop=%d, childOffSet=%d",
                 childHeight, scrollY, offsetUptoChild, dY, child.getTop(), childOffSet);
 
         if (childOffSet != 0) {

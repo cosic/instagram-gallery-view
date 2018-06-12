@@ -12,11 +12,10 @@ import com.ltst.instagramgallerysample.gallery.GalleryAppBarLayout;
 import com.ltst.instagramgallerysample.gallery.GalleryRecyclerView;
 import com.ltst.instagramgallerysample.utils.EndlessRecyclerScrollListener;
 import com.ltst.instagramgallerysample.utils.GridSpacingItemDecoration;
+import com.ltst.instagramgallerysample.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,12 +30,12 @@ public class MainActivity extends AppCompatActivity {
         appBarLayout.setOnCollapseChangeStateListener(new GalleryAppBarLayout.OnCollapseChangeStateListener() {
             @Override
             public void onCollapsed() {
-                Timber.d("OnCollapseChangeStateListener: collapsed");
+                Logger.d("OnCollapseChangeStateListener: collapsed");
             }
 
             @Override
             public void onExpended() {
-                Timber.d("OnCollapseChangeStateListener: expended");
+                Logger.d("OnCollapseChangeStateListener: expended");
             }
         });
 
@@ -63,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 appBarLayout.collapse();
             }
         });
+
         expandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         List<GalleryData> items = new ArrayList<>();
-        int count = 60;
+        int count = 100;
         for (int i = 0; i < count; i++) {
             items.add(new GalleryData(i + 1));
         }

@@ -24,8 +24,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 
 import com.ltst.instagramgallerysample.R;
-
-import timber.log.Timber;
+import com.ltst.instagramgallerysample.utils.Logger;
 
 public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector.OnGestureListener {
 
@@ -128,7 +127,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
     protected void onLayout(final boolean changed, final int l, final int t, final int r, final int b) {
         super.onLayout(changed, l, t, r, b);
         int top = getTop();
-        Timber.d("onLayout, top=%d, mLastTopPosition=%d", top, mLastTopPosition);
+        Logger.d("onLayout, top=%d, mLastTopPosition=%d", top, mLastTopPosition);
         ViewCompat.offsetTopAndBottom(this, top + mLastTopPosition);
     }
 
@@ -338,7 +337,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
             childOffSet = -height - top + mAirSpace;
         }
 
-        Timber.d("Child: height=%d, scrollY=%d, dY=%d, parentTop=%d, childOffSet=%d",
+        Logger.d("Child: height=%d, scrollY=%d, dY=%d, parentTop=%d, childOffSet=%d",
                 height, scrollY, dY, parent.getTop(), childOffSet);
 
         if (childOffSet != 0) {
@@ -404,7 +403,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
             switch (e.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN: {
                     mStartFingerYPositionParent = (int) e.getY();
-                    Timber.d("ParentPositions: startFingerYPosition =%d", mStartFingerYPositionParent);
+                    Logger.d("ParentPositions: startFingerYPosition =%d", mStartFingerYPositionParent);
                     mIsFingerDown = true;
                 }
                 break;
@@ -418,7 +417,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
                     int positionY = (int) e.getY();
                     int dY = positionY - mStartFingerYPositionParent;
                     int top = view.getTop();
-                    Timber.d("ParentPositions: scrollY=%d, top=%d, positionY=%d, dY=%d", scrollY, top, positionY, dY);
+                    Logger.d("ParentPositions: scrollY=%d, top=%d, positionY=%d, dY=%d", scrollY, top, positionY, dY);
 
                     // Если скролим ввер и палец вышел
                     // из региона скролинга списка
