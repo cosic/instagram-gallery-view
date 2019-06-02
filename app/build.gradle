@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.0"
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.ltst.instagramgallerysample"
         minSdkVersion 19
@@ -21,7 +21,7 @@ android {
 
 dependencies {
 
-    def support="28.0.0-alpha1"
+    def support="28.0.0"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
