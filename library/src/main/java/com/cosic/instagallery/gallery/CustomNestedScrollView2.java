@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample.gallery;
+package com.cosic.instagallery.gallery;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -11,8 +11,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.ltst.instagramgallerysample.utils.Logger;
+import com.cosic.instagallery.utils.Logger;
 
 public class CustomNestedScrollView2 extends NestedScrollView implements GestureDetector.OnGestureListener {
 

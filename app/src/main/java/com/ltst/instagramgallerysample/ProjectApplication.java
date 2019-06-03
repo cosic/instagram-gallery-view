@@ -1,8 +1,7 @@
 package com.ltst.instagramgallerysample;
 
 import android.app.Application;
-
-import com.ltst.instagramgallerysample.utils.Logger;
+import com.cosic.instagallery.utils.Logger;
 
 public class ProjectApplication extends Application {
 

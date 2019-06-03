@@ -7,12 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.ltst.instagramgallerysample.data.GalleryData;
-import com.ltst.instagramgallerysample.gallery.GalleryAppBarLayout;
-import com.ltst.instagramgallerysample.gallery.GalleryRecyclerView;
-import com.ltst.instagramgallerysample.utils.EndlessRecyclerScrollListener;
-import com.ltst.instagramgallerysample.utils.GridSpacingItemDecoration;
-import com.ltst.instagramgallerysample.utils.Logger;
+import com.cosic.instagallery.data.GalleryData;
+import com.cosic.instagallery.gallery.GalleryAppBarLayout;
+import com.cosic.instagallery.gallery.GalleryRecyclerView;
+import com.cosic.instagallery.utils.EndlessRecyclerScrollListener;
+import com.cosic.instagallery.utils.GridSpacingItemDecoration;
+import com.cosic.instagallery.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,13 +74,17 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.setOnGalleryClickListener(new GalleryAdapter.OnGalleryClickListener() {
             @Override
-            public void onClick(final int position, final GalleryData item) {
+            public void onClick(final int position, final GalleryData item) { // TODO move to library;
                 Toast.makeText(MainActivity.this, "Click by " + item.value, Toast.LENGTH_SHORT).show();
                 appBarLayout.expand();
                 recyclerView.scrollToPosition(position);
             }
         });
 
+        mockData(adapter);
+    }
+
+    private void mockData(GalleryAdapter adapter) {
         List<GalleryData> items = new ArrayList<>();
         int count = 100;
         for (int i = 0; i < count; i++) {

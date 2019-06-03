@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample.gallery;
+package com.cosic.instagallery.gallery;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -22,9 +22,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
-
-import com.ltst.instagramgallerysample.R;
-import com.ltst.instagramgallerysample.utils.Logger;
+import com.cosic.instagallery.R;
+import com.cosic.instagallery.utils.Logger;
 
 public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector.OnGestureListener {
 
@@ -464,7 +463,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public final static class SavedState extends BaseSavedState {
+    public final static class SavedState extends View.BaseSavedState {
 
         private int mLastTopPosition;
 
@@ -483,7 +482,7 @@ public class GalleryAppBarLayout extends AppBarLayout implements GestureDetector
             out.writeInt(mLastTopPosition);
         }
 
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);
             }

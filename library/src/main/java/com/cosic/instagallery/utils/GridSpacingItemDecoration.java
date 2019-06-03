@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample.utils;
+package com.cosic.instagallery.utils;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

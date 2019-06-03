@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample.utils;
+package com.cosic.instagallery.utils;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,7 +39,7 @@ public abstract class EndlessRecyclerScrollListener extends RecyclerView.OnScrol
 
     /**
      * This happens many times a second during a scroll, so be wary of the code you place here.
-     * We are given a few useful parameters to help us work out if we need to load some more data,
+     * We are given a few useful parameters to help us work out if we need to load some more com.cosic.instagallery.data,
      * but first we check if we are waiting for the previous load to finish.
      */
     @Override

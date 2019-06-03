@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample.gallery;
+package com.cosic.instagallery.gallery;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

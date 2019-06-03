@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ltst.instagramgallerysample.gallery.GalleryNestedScrollView
+<com.ltst.instagramgallerysample.com.cosic.instagallery.gallery.GalleryNestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/gallery"
+    android:id="@+id/com.cosic.instagallery.gallery"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingEnd="16dp"
@@ -47,4 +47,4 @@
 
     </LinearLayout>
 
-</com.ltst.instagramgallerysample.gallery.GalleryNestedScrollView>
+</com.ltst.instagramgallerysample.com.cosic.instagallery.gallery.GalleryNestedScrollView>
