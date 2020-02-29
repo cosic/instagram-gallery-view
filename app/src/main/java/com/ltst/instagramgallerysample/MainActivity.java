@@ -1,12 +1,12 @@
 package com.ltst.instagramgallerysample;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import com.cosic.instagallery.data.GalleryData;
 import com.cosic.instagallery.gallery.GalleryAppBarLayout;
 import com.cosic.instagallery.gallery.GalleryRecyclerView;

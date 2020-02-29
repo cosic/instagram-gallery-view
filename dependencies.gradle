@@ -1,0 +1,29 @@
+
+def buildVersions = [:]
+buildVersions.minSdk = 21
+buildVersions.targetSdk = 29
+buildVersions.compileSdk = 29
+buildVersions.buildTools = "29.0.1"
+ext.buildVersions = buildVersions
+
+def versions = [:]
+versions.kotlin = "1.3.61"
+ext.versions = versions
+
+def libs = [:]
+libs.kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin"
+libs.gradleTools = "com.android.tools.build:gradle:3.5.3"
+ext.libs = libs
+
+def androidx = [:]
+androidx.appCompat = 'androidx.appcompat:appcompat:1.1.0'
+androidx.material = 'com.google.android.material:material:1.1.0-rc01'
+androidx.recyclerView = 'androidx.recyclerview:recyclerview:1.1.0'
+androidx.annotations = 'androidx.annotation:annotation:1.1.0'
+libs.androidx = androidx
+
+def gradlePlugins = [:]
+gradlePlugins.gradle = "com.android.tools.build:gradle:3.5.3"
+gradlePlugins.kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+ext.gradlePlugins = gradlePlugins
+

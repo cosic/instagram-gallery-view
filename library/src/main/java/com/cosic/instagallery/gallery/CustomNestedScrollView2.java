@@ -1,17 +1,17 @@
 package com.cosic.instagallery.gallery;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.Nullable;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
 import com.cosic.instagallery.utils.Logger;
+import com.google.android.material.appbar.AppBarLayout;
 
 public class CustomNestedScrollView2 extends NestedScrollView implements GestureDetector.OnGestureListener {
 
