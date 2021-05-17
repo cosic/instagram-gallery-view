@@ -1,4 +1,4 @@
-package com.cosic.instagallery.gallery
+package com.cosic.instagallery
 
 import android.content.Context
 import android.graphics.PointF
@@ -10,14 +10,19 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
-import com.cosic.instagallery.utils.Logger
 import com.google.android.material.appbar.AppBarLayout
 
-class GalleryRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : RecyclerView(context, attrs, defStyle) {
+class GalleryRecyclerView
+@JvmOverloads
+constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0
+) : RecyclerView(context, attrs, defStyle) {
 
     private var mOnDispatchTouchListener: OnDispatchTouchListener? = null
 
-    private val mSmoothScroller: RecyclerView.SmoothScroller
+    private val mSmoothScroller: SmoothScroller
 
     private var mChild: AppBarLayout? = null
 
@@ -114,7 +119,7 @@ class GalleryRecyclerView @JvmOverloads constructor(context: Context, attrs: Att
     class GallerySmoothScroller(context: Context) : LinearSmoothScroller(context) {
 
         override fun getVerticalSnapPreference(): Int {
-            return LinearSmoothScroller.SNAP_TO_START
+            return SNAP_TO_START
         }
 
         override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {

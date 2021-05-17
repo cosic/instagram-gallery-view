@@ -1,4 +1,4 @@
-package com.cosic.instagallery.gallery
+package com.cosic.instagallery
 
 import android.content.Context
 import android.util.AttributeSet
@@ -9,27 +9,27 @@ import com.google.android.material.appbar.AppBarLayout
 
 class GalleryNestedScrollView : NestedScrollView {
 
-    private var mChild: AppBarLayout? = null
+    private var child: AppBarLayout? = null
 
     private val nestedAppBar: AppBarLayout?
         get() {
-            if (mChild == null) {
+            if (child == null) {
                 val parent = parent as ViewGroup
                 for (i in 0 until parent.childCount) {
                     val childAt = parent.getChildAt(i)
                     if (childAt is AppBarLayout) {
-                        mChild = childAt
+                        child = childAt
                     }
                 }
             }
-            return mChild
+            return child
         }
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {}
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)

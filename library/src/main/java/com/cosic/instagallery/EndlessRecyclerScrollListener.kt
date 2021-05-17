@@ -1,4 +1,4 @@
-package com.cosic.instagallery.utils
+package com.cosic.instagallery
 
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -8,51 +8,53 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 abstract class EndlessRecyclerScrollListener
 @JvmOverloads
 constructor(
-    private val mLayoutManager: RecyclerView.LayoutManager,
-   /**
+    private val layoutManager: RecyclerView.LayoutManager,
+    /**
     * The minimum amount of items to have below your current scroll position
     * before mLoading more.
     */
-   private val mVisibleThreshold: Int = DEFAULT_VISIBLE_THRESHOLD
+   private val visibleThreshold: Int = DEFAULT_VISIBLE_THRESHOLD
 ) : RecyclerView.OnScrollListener() {
 
     /**
      * True if RecyclerView is scrolled up to end of list items;
      */
-    private var mIsScrolledToEnd: Boolean = false
+    private var isScrolledToEnd: Boolean = false
 
     init {
-
-        require(mLayoutManager is GridLayoutManager
-            || mLayoutManager is LinearLayoutManager
-            || mLayoutManager is StaggeredGridLayoutManager) { "Unknown Layout Manager parent class;" }
+        require(layoutManager is GridLayoutManager
+            || layoutManager is LinearLayoutManager
+            || layoutManager is StaggeredGridLayoutManager) { "Unknown Layout Manager parent class;" }
     }
 
     /**
      * This happens many times a second during a scroll, so be wary of the code you place here.
-     * We are given a few useful parameters to help us work out if we need to load some more com.cosic.instagallery.data,
+     * We are given a few useful parameters to help us work out if we need to load some more com.ltst.instagramgallerysample.data,
      * but first we check if we are waiting for the previous load to finish.
      */
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
 
-        val visibleItemCount = mLayoutManager.childCount
-        val totalItemCount = mLayoutManager.itemCount
+        val visibleItemCount = layoutManager.childCount
+        val totalItemCount = layoutManager.itemCount
         val firstVisibleItemPositions = IntArray(2)
         var firstVisibleItem = 0
-        if (mLayoutManager is StaggeredGridLayoutManager) {
-            firstVisibleItem = mLayoutManager
-                .findFirstVisibleItemPositions(firstVisibleItemPositions)[0]
-        } else if (mLayoutManager is GridLayoutManager) {
-            firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition()
-        } else if (mLayoutManager is LinearLayoutManager) {
-            firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition()
+        firstVisibleItem = when (layoutManager) {
+            is StaggeredGridLayoutManager -> layoutManager.findFirstVisibleItemPositions(firstVisibleItemPositions)[0]
+            is GridLayoutManager -> layoutManager.findFirstVisibleItemPosition()
+            is LinearLayoutManager -> layoutManager.findFirstVisibleItemPosition()
+            else -> -1
         }
 
         onScrolled(firstVisibleItem, visibleItemCount, totalItemCount)
 
-        val isEnd = totalItemCount - visibleItemCount <= firstVisibleItem + mVisibleThreshold
-        mIsScrolledToEnd = isEnd
+        val isEnd = totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold
+        isScrolledToEnd = isEnd
         onScrolledToEndChanged(isEnd) // TODO handle the end of recyclerview;
+        //        if (mIsScrolledToEnd != isEnd) {
+        //            mIsScrolledToEnd = isEnd;
+        //            onScrolledToEndChanged(isEnd);
+        //        }
+        // TODO handle the end of recyclerview;
         //        if (mIsScrolledToEnd != isEnd) {
         //            mIsScrolledToEnd = isEnd;
         //            onScrolledToEndChanged(isEnd);
@@ -71,8 +73,6 @@ constructor(
     protected abstract fun onScrolledToEndChanged(isEnded: Boolean)
 
     companion object {
-
-        private val DEFAULT_VISIBLE_THRESHOLD = 10
+        private const val DEFAULT_VISIBLE_THRESHOLD = 10
     }
-
 }

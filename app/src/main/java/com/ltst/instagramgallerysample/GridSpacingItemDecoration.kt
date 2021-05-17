@@ -1,4 +1,4 @@
-package com.cosic.instagallery.utils
+package com.ltst.instagramgallerysample
 
 import android.graphics.Rect
 import android.view.View

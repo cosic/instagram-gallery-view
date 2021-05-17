@@ -1,4 +1,4 @@
-package com.cosic.instagallery.gallery
+package com.cosic.instagallery
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,30 +8,31 @@ import android.view.ViewGroup
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
-import com.cosic.instagallery.utils.Logger
 import com.google.android.material.appbar.AppBarLayout
 
-class CustomNestedScrollView2 : NestedScrollView, GestureDetector.OnGestureListener {
+private const val MARGIN_TOP = 160
 
-    private var mGestureDetector: GestureDetectorCompat? = null
+class CustomNestedScrollView : NestedScrollView, GestureDetector.OnGestureListener {
 
-    private var mChild: AppBarLayout? = null
+    private var gestureDetector: GestureDetectorCompat? = null
 
-    private val mIsFingerDown: Boolean = false
-    private val mStartFingerYPosition: Int = 0
+    private var child: AppBarLayout? = null
+
+    private val isFingerDown: Boolean = false
+    private val startFingerYPosition: Int = 0
 
     private val nestedAppBar: AppBarLayout?
         get() {
-            if (mChild == null) {
+            if (child == null) {
                 val parent = parent as ViewGroup
                 for (i in 0 until parent.childCount) {
                     val childAt = parent.getChildAt(i)
                     if (childAt is AppBarLayout) {
-                        mChild = childAt
+                        child = childAt
                     }
                 }
             }
-            return mChild
+            return child
         }
 
     constructor(context: Context) : super(context) {
@@ -47,7 +48,7 @@ class CustomNestedScrollView2 : NestedScrollView, GestureDetector.OnGestureListe
     }
 
     private fun init(context: Context) {
-        mGestureDetector = GestureDetectorCompat(context, this)
+        gestureDetector = GestureDetectorCompat(context, this)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -62,24 +63,24 @@ class CustomNestedScrollView2 : NestedScrollView, GestureDetector.OnGestureListe
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
-        //        mGestureDetector.onTouchEvent(e);
+        //        gestureDetector.onTouchEvent(e);
         //
         //        switch (e.getActionMasked()) {
         //            case MotionEvent.ACTION_DOWN: {
-        //                mStartFingerYPosition = (int) e.getY();
-        //                mIsFingerDown = true;
+        //                startFingerYPosition = (int) e.getY();
+        //                isFingerDown = true;
         //            }
         //            break;
         //            case MotionEvent.ACTION_MOVE: {
         //                final int oldY = (int) e.getY();
-        //                final int dY = oldY - mStartFingerYPosition;
-        ////                mStartFingerYPosition = oldY;
+        //                final int dY = oldY - startFingerYPosition;
+        ////                startFingerYPosition = oldY;
         //                applyOffSetChanges(-dY);
         //            }
         //            break;
         //            case MotionEvent.ACTION_UP:
         //            case MotionEvent.ACTION_CANCEL: {
-        //                mIsFingerDown = false;
+        //                isFingerDown = false;
         //            }
         //            break;
         //            default:
@@ -161,9 +162,4 @@ class CustomNestedScrollView2 : NestedScrollView, GestureDetector.OnGestureListe
     }
 
     interface GalleryRecyclerViewChild
-
-    companion object {
-
-        private val MARGIN_TOP = 160
-    }
 }

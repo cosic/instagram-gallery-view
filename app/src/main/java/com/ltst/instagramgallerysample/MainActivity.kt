@@ -5,12 +5,10 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import com.cosic.instagallery.data.GalleryData
-import com.cosic.instagallery.gallery.GalleryAppBarLayout
-import com.cosic.instagallery.gallery.GalleryRecyclerView
-import com.cosic.instagallery.utils.EndlessRecyclerScrollListener
-import com.cosic.instagallery.utils.GridSpacingItemDecoration
-import com.cosic.instagallery.utils.Logger
+import com.cosic.instagallery.GalleryAppBarLayout
+import com.cosic.instagallery.GalleryRecyclerView
+import com.cosic.instagallery.EndlessRecyclerScrollListener
+import com.cosic.instagallery.Logger
 import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {

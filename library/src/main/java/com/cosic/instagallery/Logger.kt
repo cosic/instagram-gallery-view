@@ -1,11 +1,11 @@
-package com.cosic.instagallery.utils
+package com.cosic.instagallery
 
 import android.util.Log
 
 object Logger {
 
-    private val TAG = "InstagramGallarySample"
-    private var isDebugable = false
+    private const val TAG = "InstagramGallerySample"
+    private var isDebuggable = false
 
     fun d(message: String) {
         Log.d(TAG, message)
@@ -15,8 +15,8 @@ object Logger {
         Log.d(TAG, String.format(message, *args))
     }
 
-    fun setDebugable(debugable: Boolean) {
-        isDebugable = debugable
+    fun setDebuggable(debuggable: Boolean) {
+        isDebuggable = debuggable
     }
 
 }

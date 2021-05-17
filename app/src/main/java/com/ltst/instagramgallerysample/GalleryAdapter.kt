@@ -7,47 +7,42 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.cosic.instagallery.data.GalleryData
 
 import java.util.ArrayList
 
 class GalleryAdapter(context: Context) : RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder>() {
 
-    private val mInflater: LayoutInflater = LayoutInflater.from(context)
-    private val mItems = ArrayList<GalleryData>()
-    private val mColors = ArrayList<Int>()
-    private var mOnGalleryClickListener: OnGalleryClickListener? = null
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private val items = ArrayList<GalleryData>()
+    private val colors = ArrayList<Int>()
+    private var onGalleryClickListener: OnGalleryClickListener? = null
 
     init {
         for (s in context.resources.getStringArray(R.array.default_color_choice_values)) {
-            mColors.add(Color.parseColor(s))
+            colors.add(Color.parseColor(s))
         }
     }
 
     fun setOnGalleryClickListener(listener: OnGalleryClickListener?) {
-        mOnGalleryClickListener = listener
+        onGalleryClickListener = listener
     }
 
     fun clear() {
-        mItems.clear()
+        items.clear()
     }
 
     fun addAll(items: List<GalleryData>) {
-        mItems.addAll(items)
-    }
-
-    fun getItem(position: Int): GalleryData {
-        return mItems[position]
+        this.items.addAll(items)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryViewHolder {
-        val view = mInflater.inflate(R.layout.gallery_item_view, parent, false)
+        val view = inflater.inflate(R.layout.gallery_item_view, parent, false)
         val viewHolder = GalleryViewHolder(view)
         view.setOnClickListener {
-            if (mOnGalleryClickListener != null) {
+            if (onGalleryClickListener != null) {
                 val adapterPosition = viewHolder.adapterPosition
                 val item = getItem(adapterPosition)
-                mOnGalleryClickListener!!.onClick(adapterPosition, item)
+                onGalleryClickListener!!.onClick(adapterPosition, item)
             }
         }
         return viewHolder
@@ -59,20 +54,24 @@ class GalleryAdapter(context: Context) : RecyclerView.Adapter<GalleryAdapter.Gal
         val viewById = view.findViewById<View>(R.id.item_view)
         val textView = view.findViewById<TextView>(R.id.item_value)
         viewById.setBackgroundColor(getColor(position))
-        textView.text = "" + item.value
+        textView.text = item.value.toString()
     }
 
     override fun getItemCount(): Int {
-        return mItems.size
+        return items.size
     }
 
     override fun getItemId(position: Int): Long {
         return getItem(position).hashCode().toLong()
     }
 
+    private fun getItem(position: Int): GalleryData {
+        return items[position]
+    }
+
     private fun getColor(position: Int): Int {
-        val i = position % mColors.size
-        return mColors[i]
+        val i = position % colors.size
+        return colors[i]
     }
 
     class GalleryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

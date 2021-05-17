@@ -1,4 +1,4 @@
-package com.cosic.instagallery.gallery
+package com.cosic.instagallery
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -19,8 +19,6 @@ import androidx.core.view.NestedScrollingParent
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
-import com.cosic.instagallery.R
-import com.cosic.instagallery.utils.Logger
 import com.google.android.material.appbar.AppBarLayout
 
 class GalleryAppBarLayout
@@ -144,13 +142,6 @@ constructor(
             }
             return false
         }
-    }
-
-    private enum class MoveEventState {
-        COLLAPSED,
-        MOVE_UP,
-        MOVE_DOWN,
-        EXPANDED
     }
 
     init {
@@ -455,6 +446,13 @@ constructor(
         fun onCollapsed()
 
         fun onExpended()
+    }
+
+    private enum class MoveEventState {
+        COLLAPSED,
+        MOVE_UP,
+        MOVE_DOWN,
+        EXPANDED
     }
 
     companion object {
