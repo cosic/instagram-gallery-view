@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample
+package com.cosic.instagramgallerysample
 
 import android.content.Context
 import android.util.AttributeSet

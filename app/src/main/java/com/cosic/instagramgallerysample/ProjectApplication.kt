@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample
+package com.cosic.instagramgallerysample
 
 import android.app.Application
 import com.cosic.instagallery.Logger

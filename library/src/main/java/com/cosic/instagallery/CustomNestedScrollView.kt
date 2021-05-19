@@ -10,8 +10,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import com.google.android.material.appbar.AppBarLayout
 
-private const val MARGIN_TOP = 160
-
 class CustomNestedScrollView : NestedScrollView, GestureDetector.OnGestureListener {
 
     private var gestureDetector: GestureDetectorCompat? = null
@@ -162,4 +160,8 @@ class CustomNestedScrollView : NestedScrollView, GestureDetector.OnGestureListen
     }
 
     interface GalleryRecyclerViewChild
+
+    companion object {
+        private const val MARGIN_TOP = 160
+    }
 }

@@ -1,4 +1,4 @@
-package com.ltst.instagramgallerysample
+package com.cosic.instagramgallerysample
 
 import android.os.Bundle
 import android.widget.Button
