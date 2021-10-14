@@ -67,43 +67,56 @@ constructor(
         lm.startSmoothScroll(mSmoothScroller)
     }
 
-    override fun onTouchEvent(e: MotionEvent): Boolean {
+    override fun onTouchEvent(motionEvent: MotionEvent): Boolean {
         if (mOnDispatchTouchListener != null) {
-            if (mOnDispatchTouchListener!!.onDispatchTouchEvent(this, e)) {
+            if (mOnDispatchTouchListener!!.onDispatchTouchEvent(this, motionEvent)) {
                 return true
             }
         }
 
-        when (e.actionMasked) {
-            MotionEvent.ACTION_DOWN -> Logger.d("GalleryRecyclerView: onTouchEvent ACTION_DOWN")
+        when (motionEvent.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                Logger.d("GalleryRecyclerView: onTouchEvent ACTION_DOWN")
+            }
             MotionEvent.ACTION_MOVE -> {
             }
-            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> Logger.d("GalleryRecyclerView: onTouchEvent ACTION_UP")
+            MotionEvent.ACTION_CANCEL,
+            MotionEvent.ACTION_UP -> {
+                Logger.d("GalleryRecyclerView: onTouchEvent ACTION_UP")
+            }
         }
-        return super.onTouchEvent(e)
+        return super.onTouchEvent(motionEvent)
     }
 
-    override fun dispatchTouchEvent(e: MotionEvent): Boolean {
-        when (e.actionMasked) {
+    override fun dispatchTouchEvent(motionEvent: MotionEvent): Boolean {
+        when (motionEvent.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 if (mOnDispatchTouchListener != null) {
-                    mOnDispatchTouchListener!!.onDispatchTouchEvent(this, e)
+                    mOnDispatchTouchListener!!.onDispatchTouchEvent(this, motionEvent)
                 }
                 Logger.d("GalleryRecyclerView: dispatchTouchEvent ACTION_DOWN")
             }
             MotionEvent.ACTION_MOVE -> {
             }
-            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> Logger.d("GalleryRecyclerView: dispatchTouchEvent ACTION_UP")
+            MotionEvent.ACTION_CANCEL,
+            MotionEvent.ACTION_UP -> {
+                Logger.d("GalleryRecyclerView: dispatchTouchEvent ACTION_UP")
+            }
         }
-        return super.dispatchTouchEvent(e)
+        return super.dispatchTouchEvent(motionEvent)
     }
 
     override fun onInterceptTouchEvent(e: MotionEvent): Boolean {
         when (e.actionMasked) {
-            MotionEvent.ACTION_DOWN -> Logger.d("GalleryRecyclerView: onInterceptTouchEvent ACTION_DOWN")
+            MotionEvent.ACTION_DOWN -> {
+                Logger.d("GalleryRecyclerView: onInterceptTouchEvent ACTION_DOWN")
+            }
             MotionEvent.ACTION_MOVE -> {
             }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> Logger.d("GalleryRecyclerView: onInterceptTouchEvent ACTION_UP")
+            MotionEvent.ACTION_UP,
+            MotionEvent.ACTION_CANCEL -> {
+                Logger.d("GalleryRecyclerView: onInterceptTouchEvent ACTION_UP")
+            }
         }
         return super.onInterceptTouchEvent(e)
     }
@@ -132,7 +145,7 @@ constructor(
 
         companion object {
 
-            private val MILLISECONDS_PER_INCH = 50f //default is 25f (bigger == slower)
+            private const val MILLISECONDS_PER_INCH = 50f //default is 25f (bigger == slower)
         }
     }
 }

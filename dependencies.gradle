@@ -3,27 +3,27 @@ def buildVersions = [:]
 buildVersions.minSdk = 21
 buildVersions.targetSdk = 30
 buildVersions.compileSdk = 30
-buildVersions.buildTools = "30.0.2"
+buildVersions.buildTools = "30.0.3"
 ext.buildVersions = buildVersions
 
 def versions = [:]
-versions.kotlin = "1.3.61"
+versions.kotlin = "1.5.31"
 ext.versions = versions
 
 def libs = [:]
 libs.kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin"
-libs.gradleTools = "com.android.tools.build:gradle:4.1.1"
 ext.libs = libs
 
 def androidx = [:]
-androidx.appCompat = 'androidx.appcompat:appcompat:1.1.0'
-androidx.material = 'com.google.android.material:material:1.3.0'
-androidx.recyclerView = 'androidx.recyclerview:recyclerview:1.1.0'
-androidx.annotations = 'androidx.annotation:annotation:1.1.0'
+androidx.appCompat = 'androidx.appcompat:appcompat:1.3.1'
+androidx.material = 'com.google.android.material:material:1.4.0'
+androidx.recyclerView = 'androidx.recyclerview:recyclerview:1.2.1'
+androidx.annotations = 'androidx.annotation:annotation:1.2.0'
 libs.androidx = androidx
 
 def gradlePlugins = [:]
-gradlePlugins.gradle = "com.android.tools.build:gradle:4.1.1"
+gradlePlugins.gradle = "com.android.tools.build:gradle:7.1.0-alpha05"
 gradlePlugins.kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+gradlePlugins.versions = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
 ext.gradlePlugins = gradlePlugins
 

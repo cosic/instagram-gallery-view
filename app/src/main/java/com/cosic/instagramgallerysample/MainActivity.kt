@@ -61,10 +61,10 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        mockData(adapter)
+        bindData(adapter)
     }
 
-    private fun mockData(adapter: GalleryAdapter) {
+    private fun bindData(adapter: GalleryAdapter) {
         val items = ArrayList<GalleryData>()
         val count = 100
         for (i in 0 until count) {
