@@ -1,3 +1,7 @@
 # Instagram Gallery View
 
-![Screenshot#1](/assets/screenshot_1.png)
+Sample widget with mechanics like as Instagram Gallery Widget for photo selecting.  
+
+<div align="center">
+    <img src="assets/preview.gif" width="320px"</img> 
+</div>

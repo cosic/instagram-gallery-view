@@ -22,7 +22,7 @@ androidx.annotations = 'androidx.annotation:annotation:1.2.0'
 libs.androidx = androidx
 
 def gradlePlugins = [:]
-gradlePlugins.gradle = "com.android.tools.build:gradle:7.1.0-alpha05"
+gradlePlugins.gradle = "com.android.tools.build:gradle:7.1.0"
 gradlePlugins.kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
 gradlePlugins.versions = "com.github.ben-manes:gradle-versions-plugin:0.39.0"
 ext.gradlePlugins = gradlePlugins
